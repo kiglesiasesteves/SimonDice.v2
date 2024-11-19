@@ -97,7 +97,8 @@ class IU {
                 StartButton(enabled = true) {
                     modelView.clearSecuenciaJuego()
                     modelView.clearSecuenciaJugador()
-                    secuenciaActual = modelView.generarSecuencia() // Genera la nueva secuencia
+                    modelView.clearRonda()
+                    secuenciaActual = modelView.generarSecuencia()
                     triggerAnimation = true
                 }
 
