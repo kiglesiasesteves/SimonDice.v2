@@ -17,21 +17,22 @@ class ModelView {
         Log.d("ModelView", "Ronda aumentada: ${ronda.ronda.value}")
     }
 
-    fun generarSecuencia() {
-
+    fun generarSecuencia(): List<SimonColor> {
         val newColor = SimonColor.entries[(0..3).random()]
         SecuenciaJuego.secuencia.add(newColor)
         Log.d("ModelView", "Nueva secuencia generada: ${SecuenciaJuego.secuencia.joinToString()}")
+        return SecuenciaJuego.secuencia
     }
 
-    fun ComprobarSecuencia() {
+    fun ComprobarSecuencia():Boolean {
         val size = SecuenciaJugador.secuencia.size
         var isCorrect = true
 
         for (i in 0 until size) {
             if (SecuenciaJugador.secuencia[i] != SecuenciaJuego.secuencia[i]) {
                 isCorrect = false
-                break
+                return false
+
             }
         }
 
@@ -45,9 +46,12 @@ class ModelView {
                 aumentarRonda()
                 generarSecuencia()
                 clearSecuenciaJugador()
+                return true
             }
         } else {
+            return false
         }
+        return false
     }
 
     fun clearSecuenciaJugador() {
