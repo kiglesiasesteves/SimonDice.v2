@@ -61,4 +61,7 @@ class ModelView {
     fun clearSecuenciaJuego() {
         SecuenciaJuego.secuencia.clear()
     }
+    fun clearRonda() {
+        ronda.clear()
+    }
 }
