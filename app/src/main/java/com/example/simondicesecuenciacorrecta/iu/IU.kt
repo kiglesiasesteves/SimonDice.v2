@@ -1,4 +1,4 @@
-package com.example.simondicesecuenciacorrecta.IU
+package com.example.simondicesecuenciacorrecta.iu
 
 
 import androidx.compose.foundation.Image
@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -76,6 +77,15 @@ class IU {
         var iluminadoIndex by remember { mutableIntStateOf(-1) }
         var secuenciaActual by remember { mutableStateOf<List<SimonColor>>(emptyList()) }
         var triggerAnimation by remember { mutableStateOf(false) }
+        var _activostart by remember { mutableStateOf(modelView.estadoLiveData.value!!.start_activo) }
+        var _activoBoton by remember { mutableStateOf(modelView.estadoLiveData.value!!.start_activo) }
+
+        modelView.estadoLiveData.observe(LocalLifecycleOwner.current) {
+            _activostart = it.start_activo
+        }
+        modelView.estadoLiveData.observe(LocalLifecycleOwner.current) {
+            _activoBoton = it.boton_activo
+        }
 
         LaunchedEffect(secuenciaActual) {
             if (secuenciaActual.isNotEmpty()) {
@@ -106,7 +116,8 @@ class IU {
             ) {
                 Spacer(modifier = Modifier.height(50.dp))
 
-                SimonButtons(secuenciaActual, iluminadoIndex = iluminadoIndex) { color ->
+                SimonButtons(secuenciaActual, iluminadoIndex = iluminadoIndex, enabled = _activoBoton && !triggerAnimation
+                ) { color ->
                     modelView.SecuenciaJugador.secuencia.add(color)
                     if (modelView.ComprobarSecuencia()){
                         triggerAnimation=true
@@ -115,7 +126,7 @@ class IU {
 
                 Spacer(modifier = Modifier.height(50.dp))
 
-                StartButton(enabled = true) {
+                StartButton(enabled = _activostart) {
                     modelView.clearSecuenciaJuego()
                     modelView.clearSecuenciaJugador()
                     modelView.clearRonda()
@@ -176,6 +187,7 @@ class IU {
     fun SimonButtons(
         secuencia: List<SimonColor>,
         iluminadoIndex: Int,
+        enabled: Boolean,
         onColorClick: (SimonColor) -> Unit
     ) {
         Column(
@@ -292,7 +304,7 @@ class IU {
      */
     @Composable
     fun ColorButton(
-        imageResId: Int, // ID de la imagen del botón
+        imageResId: Int,
         onClick: () -> Unit,
         modifier: Modifier = Modifier
     ) {

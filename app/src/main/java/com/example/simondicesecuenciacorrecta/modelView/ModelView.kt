@@ -1,12 +1,15 @@
 package com.example.simondicesecuenciacorrecta.modelView
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
+import com.example.simondicesecuenciacorrecta.datos.Estados
 import com.example.simondicesecuenciacorrecta.datos.Ronda
 import com.example.simondicesecuenciacorrecta.datos.SecuenciaJuego
 import com.example.simondicesecuenciacorrecta.datos.SecuenciaJugador
 import com.example.simondicesecuenciacorrecta.datos.SimonColor
 
 class ModelView {
+    val estadoLiveData: MutableLiveData<Estados> = MutableLiveData(Estados.INICIO)
 
     var ronda = Ronda()
     var SecuenciaJuego = SecuenciaJuego()
@@ -18,8 +21,10 @@ class ModelView {
     }
 
     fun generarSecuencia(): List<SimonColor> {
+        estadoLiveData.value = Estados.GENERANDO
         val newColor = SimonColor.entries[(0..3).random()]
         SecuenciaJuego.secuencia.add(newColor)
+        estadoLiveData.value = Estados.ADIVINANDO
         Log.d("ModelView", "Nueva secuencia generada: ${SecuenciaJuego.secuencia.joinToString()}")
         return SecuenciaJuego.secuencia
     }
@@ -27,10 +32,13 @@ class ModelView {
     fun ComprobarSecuencia():Boolean {
         val size = SecuenciaJugador.secuencia.size
         var isCorrect = true
+        estadoLiveData.value = Estados.INICIO
+
 
         for (i in 0 until size) {
             if (SecuenciaJugador.secuencia[i] != SecuenciaJuego.secuencia[i]) {
                 isCorrect = false
+                estadoLiveData.value = Estados.INICIO
                 return false
 
             }
@@ -46,6 +54,8 @@ class ModelView {
                 aumentarRonda()
                 generarSecuencia()
                 clearSecuenciaJugador()
+                estadoLiveData.value = Estados.ADIVINANDO
+
                 return true
             }
         } else {
