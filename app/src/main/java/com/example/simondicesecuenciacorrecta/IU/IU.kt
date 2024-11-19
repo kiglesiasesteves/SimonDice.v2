@@ -48,20 +48,29 @@ import com.example.simondicesecuenciacorrecta.modelView.ModelView
 class IU {
 
     @Preview(showBackground = true)
-    @Preview(showBackground = true)
     @Composable
     fun SimonGameScreen() {
         val modelView = remember { ModelView() }
         val ronda by remember { modelView.ronda.ronda }
-        val secuenciaJuego by remember { mutableStateOf(modelView.SecuenciaJuego.secuencia) }
         var iluminadoIndex by remember { mutableIntStateOf(-1) }
+        var secuenciaActual by remember { mutableStateOf<List<SimonColor>>(emptyList()) }
+        var triggerAnimation by remember { mutableStateOf(false) }
 
-        LaunchedEffect(secuenciaJuego) {
-            secuenciaJuego.forEachIndexed { index, _ ->
-                iluminadoIndex = index
-                kotlinx.coroutines.delay(500L)
+        LaunchedEffect(secuenciaActual) {
+            if (secuenciaActual.isNotEmpty()) {
+                triggerAnimation = true
             }
-            iluminadoIndex = -1
+        }
+
+        LaunchedEffect(triggerAnimation) {
+            if (triggerAnimation) {
+                for (index in secuenciaActual.indices) {
+                    iluminadoIndex = index
+                    kotlinx.coroutines.delay(500L)
+                }
+                iluminadoIndex = -1
+                triggerAnimation = false
+            }
         }
 
         Box(
@@ -76,9 +85,11 @@ class IU {
             ) {
                 Spacer(modifier = Modifier.height(50.dp))
 
-                SimonButtons(secuenciaJuego, iluminadoIndex) { color ->
+                SimonButtons(secuenciaActual, iluminadoIndex = iluminadoIndex) { color ->
                     modelView.SecuenciaJugador.secuencia.add(color)
-                    modelView.ComprobarSecuencia()
+                    if (modelView.ComprobarSecuencia()){
+                        triggerAnimation=true
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(50.dp))
@@ -86,7 +97,8 @@ class IU {
                 StartButton(enabled = true) {
                     modelView.clearSecuenciaJuego()
                     modelView.clearSecuenciaJugador()
-                    modelView.generarSecuencia()
+                    secuenciaActual = modelView.generarSecuencia() // Genera la nueva secuencia
+                    triggerAnimation = true
                 }
 
                 Spacer(modifier = Modifier.height(60.dp))
@@ -97,6 +109,22 @@ class IU {
         }
     }
 
+
+    @Composable
+    fun StartButton(modifier: Modifier = Modifier, enabled: Boolean, onClick: () -> Unit) {
+        Button(
+            enabled = enabled,
+            onClick = onClick,
+            modifier = modifier.size(200.dp, 60.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFECECDD))
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.bstart),
+                contentDescription = null,
+                modifier = Modifier.size(150.dp)
+            )
+        }
+    }
 
     @Composable
     fun SimonButtons(
@@ -113,12 +141,12 @@ class IU {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 ColorButton(
-                    imageResId = if (iluminadoIndex == 0) R.drawable.brosa1iluminado else R.drawable.brosa1,
+                    imageResId = if (iluminadoIndex != -1 && secuencia[iluminadoIndex] == SimonColor.Pink) R.drawable.brosa1iluminado else R.drawable.brosa1,
                     onClick = { onColorClick(SimonColor.Pink) }
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 ColorButton(
-                    imageResId = if (iluminadoIndex == 1) R.drawable.bazul2iluminado else R.drawable.bazul2,
+                    imageResId = if (iluminadoIndex != -1 && secuencia[iluminadoIndex] == SimonColor.Blue) R.drawable.bazul2iluminado else R.drawable.bazul2,
                     onClick = { onColorClick(SimonColor.Blue) }
                 )
             }
@@ -128,34 +156,15 @@ class IU {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 ColorButton(
-                    imageResId = if (iluminadoIndex == 2) R.drawable.bamarillo3iluminado else R.drawable.bamarillo3,
+                    imageResId = if (iluminadoIndex != -1 && secuencia[iluminadoIndex] == SimonColor.Yellow) R.drawable.bamarillo3iluminado else R.drawable.bamarillo3,
                     onClick = { onColorClick(SimonColor.Yellow) }
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 ColorButton(
-                    imageResId = if (iluminadoIndex == 3) R.drawable.bverde4iluminado else R.drawable.bverde4,
+                    imageResId = if (iluminadoIndex != -1 && secuencia[iluminadoIndex] == SimonColor.Green) R.drawable.bverde4iluminado else R.drawable.bverde4,
                     onClick = { onColorClick(SimonColor.Green) }
                 )
             }
-        }
-    }
-
-
-
-
-    @Composable
-    fun StartButton(modifier: Modifier = Modifier, enabled: Boolean, onClick: () -> Unit) {
-        Button(
-            enabled = enabled,
-            onClick = onClick,
-            modifier = modifier.size(200.dp, 60.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFECECDD))
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.bstart),
-                contentDescription = null,
-                modifier = Modifier.size(150.dp)
-            )
         }
     }
 
@@ -184,6 +193,7 @@ class IU {
             }
         }
     }
+
     @Composable
     fun ColorButton(
         imageResId: Int, // ID de la imagen del botón
@@ -203,18 +213,4 @@ class IU {
         }
     }
 
-
-    @Composable
-    fun AnimarSecuencia(modelView: ModelView) {
-        var iluminadoIndex by remember { mutableIntStateOf(-1) }
-
-        LaunchedEffect(modelView.SecuenciaJuego.secuencia) {
-            modelView.SecuenciaJuego.secuencia.forEachIndexed { index, _ ->
-                iluminadoIndex = index
-                kotlinx.coroutines.delay(500L) // Retardo de 500ms entre colores
-            }
-            iluminadoIndex = -1 // Apagar iluminación al final
-        }
-    }
 }
-
