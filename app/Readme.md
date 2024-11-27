@@ -128,7 +128,7 @@ Así dependiendo de cada estado el botón start o los botones de colores están 
 
 ### Otras medidas de enhancement
 
-- **Utilización de Ramas**, se utilizó una rama Main en la que solo tenemos el commit final de la aplicación y una rama Develop en la que se trabajó en el desarrollo de la aplicación. De esa forma nos aseguramos de que la rama Main siempre tenga la versión final de la aplicación y sea una rama limpia y sin errores, al tener la rama Develop preparada simplemente realizamos otra rama a la hora de añadir el Readme.
+- **Utilización de Ramas**, se utilizó una rama Main  y una rama Develop en la que se trabajó en el desarrollo de la aplicación. De esa forma nos aseguramos de que la rama Main siempre tenga la versión final de la aplicación, al tener la rama Develop preparada simplemente realizamos otra rama a la hora de añadir el Readme.
 - **Utilización de commits constantes** Se realizaron commits constantes para tener un control de los cambios realizados en la aplicación y poder volver a versiones anteriores si fuera necesario, como partiamos de un proyecto basado en una aplicación ya realizada no tenemos commits de cada creación de función pero sí de las funcionalidades más importantes.
 ![Ramas.png](img%2FRamas.png)
 - **Utilización de Logcats** en diferentes partes de nuestro código para comprobar que todo funciona correctamente
