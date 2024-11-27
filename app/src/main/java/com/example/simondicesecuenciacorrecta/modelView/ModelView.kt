@@ -20,27 +20,37 @@ class ModelView {
         Log.d("ModelView", "Ronda aumentada: ${ronda.ronda.value}")
     }
 
+    /**
+     * Genera una nueva secuencia de colores, actualiza el estado y lo guarda en la lista `SecuenciaJuego`.
+     */
     fun generarSecuencia(): List<SimonColor> {
         estadoLiveData.value = Estados.GENERANDO
+        Log.d("ModelView", "Estado cambiado a GENERANDO")
+
         val newColor = SimonColor.entries[(0..3).random()]
         SecuenciaJuego.secuencia.add(newColor)
+
         estadoLiveData.value = Estados.ADIVINANDO
         Log.d("ModelView", "Nueva secuencia generada: ${SecuenciaJuego.secuencia.joinToString()}")
         return SecuenciaJuego.secuencia
     }
 
-    fun ComprobarSecuencia():Boolean {
+    /**
+     * Compara la secuencia del jugador con la secuencia generada por el juego.
+     * Si son iguales, la ronda se incrementa y se genera una nueva secuencia.
+     */
+    fun ComprobarSecuencia(): Boolean {
         val size = SecuenciaJugador.secuencia.size
         var isCorrect = true
         estadoLiveData.value = Estados.ADIVINANDO
-
+        Log.d("ModelView", "Estado cambiado a ADIVINANDO")
 
         for (i in 0 until size) {
             if (SecuenciaJugador.secuencia[i] != SecuenciaJuego.secuencia[i]) {
                 isCorrect = false
                 estadoLiveData.value = Estados.INICIO
+                Log.d("ModelView", "Secuencia incorrecta, reiniciando estado a INICIO")
                 return false
-
             }
         }
 
@@ -50,28 +60,43 @@ class ModelView {
 
         if (isCorrect) {
             if (size == SecuenciaJuego.secuencia.size) {
-                Log.d("Secuencia", "Secuencia correcta")
+                Log.d("Secuencia", "Secuencia correcta, pasando a la siguiente ronda")
                 aumentarRonda()
                 generarSecuencia()
                 clearSecuenciaJugador()
                 estadoLiveData.value = Estados.ADIVINANDO
-
+                Log.d("ModelView", "Estado cambiado a ADIVINANDO para la siguiente ronda")
                 return true
             }
         } else {
+            Log.d("ModelView", "Secuencia incorrecta.")
             return false
         }
+
         return false
     }
 
+    /**
+     * Limpia la secuencia del jugador.
+     */
     fun clearSecuenciaJugador() {
         SecuenciaJugador.secuencia.clear()
+        Log.d("ModelView", "Secuencia del jugador limpiada.")
     }
 
+    /**
+     * Limpia la secuencia generada por el juego.
+     */
     fun clearSecuenciaJuego() {
         SecuenciaJuego.secuencia.clear()
+        Log.d("ModelView", "Secuencia del juego limpiada.")
     }
+
+    /**
+     * Reinicia la ronda a cero.
+     */
     fun clearRonda() {
         ronda.clear()
+        Log.d("ModelView", "Ronda reiniciada.")
     }
 }
