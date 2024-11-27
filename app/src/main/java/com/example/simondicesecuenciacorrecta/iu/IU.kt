@@ -130,12 +130,11 @@ class IU {
                 SimonButtons(secuenciaActual, iluminadoIndex = iluminadoIndex, enabled = _activoBoton
                 ) { color ->
                     modelView.SecuenciaJugador.secuencia.add(color)
-                    if (modelView.SecuenciaJugador.secuencia.size == modelView.SecuenciaJuego.secuencia.size) {
                         if (modelView.ComprobarSecuencia()) {
                             triggerAnimation = true
                         }
                     }
-                }
+
                 Spacer(modifier = Modifier.height(50.dp))
 
                 StartButton(enabled = _activostart) {
