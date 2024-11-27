@@ -126,6 +126,12 @@ Las corutinas se utilizan para manejar tareas asincrónicas, como la animación 
 Estas implementaciones permiten que la interfaz de usuario reaccione a los cambios en los datos y maneje tareas asincrónicas de manera eficiente, mejorando la experiencia del usuario.
 Así dependiendo de cada estado el botón start o los botones de colores están blouqeados o no dependiendo de lo que nosotros tenemos estipulado en nuestra clase datos. 
 
+### Otras medidas de enhancement
+
+- Utilización de Ramas, se utilizó una rama Main en la que solo tenemos el commit final de la aplicación y una rama Develop en la que se trabajó en el desarrollo de la aplicación. De esa forma nos aseguramos de que la rama Main siempre tenga la versión final de la aplicación y sea una rama limpia y sin errores, al tener la rama Develop preparada simplemente realizamos un pull request.
+- Utilización de Logcats en diferentes partes de nuestro código para comprobar que todo funciona correctamente
+- Utilización de Debug para comprobar diferentees variables y su cambio a lo largo de la aplicación (especialmente usado en el tratamiento de los estados)
+- 
 
 
 ## Cómo Jugar
