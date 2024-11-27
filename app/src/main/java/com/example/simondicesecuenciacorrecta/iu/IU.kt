@@ -39,6 +39,8 @@ import com.example.simondicesecuenciacorrecta.R
 
 import com.example.simondicesecuenciacorrecta.datos.SimonColor
 import com.example.simondicesecuenciacorrecta.modelView.ModelView
+import kotlinx.coroutines.delay
+
 /**
  * Clase IU
  *
@@ -97,10 +99,18 @@ class IU {
             if (triggerAnimation) {
                 for (index in secuenciaActual.indices) {
                     iluminadoIndex = index
-                    kotlinx.coroutines.delay(500L)
+                    kotlinx.coroutines.delay(1000L)
                 }
                 iluminadoIndex = -1
                 triggerAnimation = false
+            }
+        }
+        LaunchedEffect(Unit) {
+
+            if (triggerAnimation) {
+                delay(2000L) // Retraso de 500ms
+                secuenciaActual = modelView.generarSecuencia()
+                triggerAnimation = true
             }
         }
 
