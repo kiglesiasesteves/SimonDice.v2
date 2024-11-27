@@ -1,15 +1,20 @@
 package com.example.simondicesecuenciacorrecta.modelView
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.example.simondicesecuenciacorrecta.datos.Estados
+import com.example.simondicesecuenciacorrecta.datos.EstadosToast
 import com.example.simondicesecuenciacorrecta.datos.Ronda
 import com.example.simondicesecuenciacorrecta.datos.SecuenciaJuego
 import com.example.simondicesecuenciacorrecta.datos.SecuenciaJugador
 import com.example.simondicesecuenciacorrecta.datos.SimonColor
 
+
 class ModelView {
     val estadoLiveData: MutableLiveData<Estados> = MutableLiveData(Estados.INICIO)
+    val toastMessageLiveData: MutableLiveData<EstadosToast> = MutableLiveData(EstadosToast.AUXILIAR)
+
 
     var ronda = Ronda()
     var SecuenciaJuego = SecuenciaJuego()
@@ -28,41 +33,33 @@ class ModelView {
         Log.d("ModelView", "Nueva secuencia generada: ${SecuenciaJuego.secuencia.joinToString()}")
         return SecuenciaJuego.secuencia
     }
-
-    fun ComprobarSecuencia():Boolean {
+    fun ComprobarSecuencia(): Boolean {
         val size = SecuenciaJugador.secuencia.size
         var isCorrect = true
         estadoLiveData.value = Estados.ADIVINANDO
-
 
         for (i in 0 until size) {
             if (SecuenciaJugador.secuencia[i] != SecuenciaJuego.secuencia[i]) {
                 isCorrect = false
                 estadoLiveData.value = Estados.INICIO
+                toastMessageLiveData.value = EstadosToast.GANASTE
                 return false
-
             }
         }
 
-        Log.d("ModelView", "Secuencia del jugador: ${SecuenciaJugador.secuencia.joinToString()}")
-        Log.d("ModelView", "Secuencia del juego: ${SecuenciaJuego.secuencia.joinToString()}")
-        Log.d("ModelView", "Secuencia correcta: $isCorrect")
-
         if (isCorrect) {
             if (size == SecuenciaJuego.secuencia.size) {
-                Log.d("Secuencia", "Secuencia correcta")
                 aumentarRonda()
                 generarSecuencia()
                 clearSecuenciaJugador()
                 estadoLiveData.value = Estados.ADIVINANDO
-
+                toastMessageLiveData.value = EstadosToast.PERDISTE
                 return true
             }
-        } else {
-            return false
         }
         return false
     }
+
 
     fun clearSecuenciaJugador() {
         SecuenciaJugador.secuencia.clear()

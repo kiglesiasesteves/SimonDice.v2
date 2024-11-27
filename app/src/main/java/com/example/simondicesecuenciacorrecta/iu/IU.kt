@@ -1,6 +1,7 @@
 package com.example.simondicesecuenciacorrecta.iu
 
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 
 import androidx.compose.ui.res.painterResource
@@ -36,11 +38,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.simondicesecuenciacorrecta.R
+import com.example.simondicesecuenciacorrecta.datos.EstadosToast
 import com.example.simondicesecuenciacorrecta.datos.SecuenciaJugador
 
 import com.example.simondicesecuenciacorrecta.datos.SimonColor
 import com.example.simondicesecuenciacorrecta.modelView.ModelView
 import kotlinx.coroutines.delay
+
 
 /**
  * Clase IU
@@ -81,13 +85,18 @@ class IU {
         var secuenciaActual by remember { mutableStateOf<List<SimonColor>>(emptyList()) }
         var triggerAnimation by remember { mutableStateOf(false) }
         var _activostart by remember { mutableStateOf(modelView.estadoLiveData.value!!.start_activo) }
-        var _activoBoton by remember { mutableStateOf(modelView.estadoLiveData.value!!.start_activo) }
+        var _activoBoton by remember { mutableStateOf(modelView.estadoLiveData.value!!.boton_activo) }
+        var _toast by remember { mutableStateOf(modelView.toastMessageLiveData.value!!.valor) }
+        val context = LocalContext.current
 
         modelView.estadoLiveData.observe(LocalLifecycleOwner.current) {
             _activostart = it.start_activo
         }
         modelView.estadoLiveData.observe(LocalLifecycleOwner.current) {
             _activoBoton = it.boton_activo
+        }
+        modelView.toastMessageLiveData.observe(LocalLifecycleOwner.current) {
+            _toast = it.valor
         }
 
         LaunchedEffect(secuenciaActual) {
@@ -133,6 +142,11 @@ class IU {
                     if (modelView.SecuenciaJugador.secuencia.size == modelView.SecuenciaJuego.secuencia.size) {
                         if (modelView.ComprobarSecuencia()) {
                             triggerAnimation = true
+                            modelView.toastMessageLiveData.value = EstadosToast.GANASTE
+                            Toast.makeText(context, _toast, Toast.LENGTH_SHORT).show()
+                        }else{
+                            modelView.toastMessageLiveData.value = EstadosToast.PERDISTE
+                            Toast.makeText(context, _toast, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
