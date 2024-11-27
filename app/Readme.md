@@ -52,6 +52,11 @@ Contiene las siguientes funciones:
 
 Estas funciones se encargan de manejar la lógica del juego y de comunicarse con la vista y con los datos. Es decir que la vista no se comunica directamente con los datos, sino que lo hace a través del ViewModel.
 
+Para tener una versión más gráfica podemos ver este diagrama de clases
+
+![Diagrama de Secuencia](img/diagram.png)
+
+
 
 ## Patrón Observer y Corutinas
 

@@ -1,0 +1,62 @@
+@startuml
+package datos {
+
+    enum Estados {
+        + start_activo: Boolean
+        + boton_activo: Boolean
+    }
+
+    enum  EstadosToast {
+        + valor: String
+    }
+
+    class Ronda {
+        + ronda: MutableLiveData<Int>
+        + clear(): Unit
+    }
+
+    class SecuenciaJuego {
+        + secuencia: MutableList<SimonColor>
+    }
+
+    class SecuenciaJugador {
+        + secuencia: MutableList<SimonColor>
+    }
+
+    enum SimonColor {
+        Pink, Blue, Yellow, Green
+    }
+}
+
+class ModelView {
+    - estadoLiveData: MutableLiveData<Estados>
+    - toastMessageLiveData: MutableLiveData<EstadosToast>
+    - ronda: Ronda
+    - secuenciaJuego: SecuenciaJuego
+    - secuenciaJugador: SecuenciaJugador
+    + aumentarRonda(): Unit
+    + generarSecuencia(): List<SimonColor>
+    + comprobarSecuencia(): Boolean
+    + clearSecuenciaJugador(): Unit
+    + clearSecuenciaJuego(): Unit
+    + clearRonda(): Unit
+}
+
+class IU {
+    + SimonGameScreen(): Unit
+    + StartButton(modifier: Modifier, enabled: Boolean, onClick: () -> Unit): Unit
+    + SimonButtons(secuencia: List<SimonColor>, iluminadoIndex: Int, enabled: Boolean, onColorClick: (SimonColor) -> Unit): Unit
+    + SimonButtonRow(colors: List<SimonColor>, secuencia: List<SimonColor>, iluminadoIndex: Int, onColorClick: (SimonColor) -> Unit): Unit
+    + PuntuactionButton(modifier: Modifier, ronda: Int, onClick: () -> Unit): Unit
+    + ColorButton(imageResId: Int, onClick: () -> Unit, modifier: Modifier): Unit
+}
+
+ModelView --> datos.Estados
+ModelView --> datos.EstadosToast
+ModelView --> datos.Ronda
+ModelView --> datos.SecuenciaJuego
+ModelView --> datos.SecuenciaJugador
+ModelView --> datos.SimonColor
+
+IU --> ModelView
+@enduml
