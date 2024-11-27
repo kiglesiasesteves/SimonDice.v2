@@ -32,7 +32,7 @@ class ModelView {
     fun ComprobarSecuencia():Boolean {
         val size = SecuenciaJugador.secuencia.size
         var isCorrect = true
-        estadoLiveData.value = Estados.INICIO
+        estadoLiveData.value = Estados.ADIVINANDO
 
 
         for (i in 0 until size) {
