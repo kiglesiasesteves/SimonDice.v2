@@ -1,6 +1,7 @@
 package com.example.simondicesecuenciacorrecta
 
 import android.os.Bundle
+import android.os.DeadObjectException
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -13,20 +14,26 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            SimonDiceSecuenciaCorrectaTheme {
-                val iu = IU()
-                iu.SimonGameScreen()            }
+        try {
+            setContent {
+                SimonDiceSecuenciaCorrectaTheme {
+                    val iu = IU()
+                    iu.SimonGameScreen()
+                }
+            }
+        } catch (e: DeadObjectException) {
+            // Handle the exception gracefully
+            e.printStackTrace()
+            // Optionally, restart the activity or show an error message to the user
         }
     }
 }
-
-
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     SimonDiceSecuenciaCorrectaTheme {
         val iu = IU()
-        iu.SimonGameScreen()    }
+        iu.SimonGameScreen()
+    }
 }

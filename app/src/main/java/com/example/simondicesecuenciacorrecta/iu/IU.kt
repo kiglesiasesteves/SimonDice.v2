@@ -1,43 +1,25 @@
 package com.example.simondicesecuenciacorrecta.iu
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
-
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.simondicesecuenciacorrecta.R
-import com.example.simondicesecuenciacorrecta.datos.SecuenciaJugador
-
+import com.example.simondicesecuenciacorrecta.datos.Estados
 import com.example.simondicesecuenciacorrecta.datos.SimonColor
 import com.example.simondicesecuenciacorrecta.modelView.ModelView
 import kotlinx.coroutines.delay
@@ -45,30 +27,30 @@ import kotlinx.coroutines.delay
 /**
  * Clase IU
  *
- * Esta clase representa la interfaz de usuario del juego "Simon Dice". Implementa
- * la lógica de interacción con el usuario mediante botones que iluminan secuencias
- * de colores y reaccionan a las entradas del jugador. Utiliza Jetpack Compose para
- * diseñar la interfaz gráfica de manera declarativa.
+ * Esta clase representa la interfaz de usuario del juego "Simón Dice". Implementa
+ * la lógica de interacción del usuario a través de botones que iluminan secuencias de colores y
+ * reaccionan a las entradas del jugador. Utiliza Jetpack Compose para diseñar la interfaz gráfica
+ * de manera declarativa.
  *
  * Funcionalidades principales:
- * - Visualización de botones de colores (rojo, azul, amarillo, verde).
- * - Gestión de la animación de la secuencia de colores.
- * - Manejo de las entradas del jugador y validación de la secuencia.
- * - Reinicio del juego y puntuación.
+ * - Mostrar botones de colores (rojo, azul, amarillo, verde).
+ * - Gestionar la animación de la secuencia de colores.
+ * - Manejar las entradas del jugador y validar la secuencia.
+ * - Restablecer el juego y puntuar.
  */
-
 class IU {
+
     /**
      * SimonGameScreen
      *
      * Componente principal de la pantalla del juego.
-     * Gestiona el flujo del juego, como la animación de las secuencias de colores,
-     * la interacción del jugador y el reinicio de la partida.
+     * Gestiona el flujo del juego, como la animación de la secuencia de colores,
+     * la interacción del jugador y el restablecimiento del juego.
      *
      * Variables:
-     * - `modelView`: Objeto que maneja la lógica del juego, incluyendo las secuencias y la ronda.
+     * - `modelView`: Objeto que maneja la lógica del juego, incluidas las secuencias y rondas.
      * - `ronda`: Puntuación actual basada en las rondas completadas.
-     * - `iluminadoIndex`: Índice del color que está iluminado en la secuencia actual.
+     * - `iluminadoIndex`: Índice del color que está iluminado actualmente en la secuencia.
      * - `secuenciaActual`: Lista de colores que forman la secuencia generada por el juego.
      * - `triggerAnimation`: Bandera para controlar cuándo iniciar la animación de la secuencia.
      */
@@ -100,18 +82,10 @@ class IU {
             if (triggerAnimation) {
                 for (index in secuenciaActual.indices) {
                     iluminadoIndex = index
-                    kotlinx.coroutines.delay(1000L)
+                    delay(1000L)
                 }
                 iluminadoIndex = -1
                 triggerAnimation = false
-            }
-        }
-        LaunchedEffect(Unit) {
-
-            if (triggerAnimation) {
-                delay(2000L) // Retraso de 500ms
-                secuenciaActual = modelView.generarSecuencia()
-                triggerAnimation = true
             }
         }
 
@@ -127,16 +101,22 @@ class IU {
             ) {
                 Spacer(modifier = Modifier.height(50.dp))
 
-                SimonButtons(secuenciaActual, iluminadoIndex = iluminadoIndex, enabled = _activoBoton
-                ) { color ->
-                    modelView.SecuenciaJugador.secuencia.add(color)
+                // SimonButtons con el estado de habilitación de los botones
+                SimonButtons(
+                    secuencia = secuenciaActual,
+                    iluminadoIndex = iluminadoIndex,
+                    enabled = _activoBoton,  // Pasar el estado del botón
+                    onColorClick = { color ->
+                        modelView.SecuenciaJugador.secuencia.add(color)
                         if (modelView.ComprobarSecuencia()) {
                             triggerAnimation = true
                         }
                     }
+                )
 
                 Spacer(modifier = Modifier.height(50.dp))
 
+                // StartButton con el estado de habilitación
                 StartButton(enabled = _activostart) {
                     modelView.clearSecuenciaJuego()
                     modelView.clearSecuenciaJugador()
@@ -147,8 +127,8 @@ class IU {
 
                 Spacer(modifier = Modifier.height(60.dp))
 
-                PuntuactionButton(ronda = ronda) {
-                }
+                // Botón de puntuación
+                PuntuactionButton(ronda = ronda) {}
             }
         }
     }
@@ -156,15 +136,14 @@ class IU {
     /**
      * StartButton
      *
-     * Botón de inicio del juego. Al hacer clic, resetea el estado del juego, incluyendo
+     * Botón para iniciar el juego. Al hacer clic, restablece el estado del juego, incluidas
      * la secuencia de colores y la puntuación, y genera una nueva secuencia.
      *
      * Parámetros:
      * - `modifier`: Modificador de diseño para personalizar el botón (opcional).
      * - `enabled`: Indica si el botón está habilitado.
-     * - `onClick`: Acción a ejecutar al hacer clic en el botón.
+     * - `onClick`: Acción a ejecutar cuando se hace clic en el botón.
      */
-
     @Composable
     fun StartButton(modifier: Modifier = Modifier, enabled: Boolean, onClick: () -> Unit) {
         Button(
@@ -180,18 +159,20 @@ class IU {
             )
         }
     }
+
     /**
      * SimonButtons
      *
-     * Botones representando los colores del juego en una cuadrícula de dos filas.
-     * Iluminan secuencialmente según `iluminadoIndex` y detectan clics del usuario
-     * para comparar con la secuencia generada.
+     * Botones que representan los colores del juego en una cuadrícula de dos filas.
+     * Se iluminan secuencialmente según `iluminadoIndex` y detectan los clics del usuario
+     * para compararlos con la secuencia generada.
      *
-     * Este método utiliza el componente `SimonButtonRow` para renderizar cada fila de botones.
+     * Este método usa el componente `SimonButtonRow` para renderizar cada fila de botones.
      *
      * Parámetros:
-     * - `secuencia`: Lista de colores generada por el juego.
-     * - `iluminadoIndex`: Índice del color actualmente iluminado.
+     * - `secuencia`: Lista de colores generados por el juego.
+     * - `iluminadoIndex`: Índice del color que está iluminado actualmente.
+     * - `enabled`: Propiedad para habilitar/deshabilitar los botones.
      * - `onColorClick`: Acción a ejecutar cuando se hace clic en un botón de color.
      */
     @Composable
@@ -209,6 +190,7 @@ class IU {
                 colors = listOf(SimonColor.Pink, SimonColor.Blue),
                 secuencia = secuencia,
                 iluminadoIndex = iluminadoIndex,
+                enabled = enabled,
                 onColorClick = onColorClick
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -216,20 +198,23 @@ class IU {
                 colors = listOf(SimonColor.Yellow, SimonColor.Green),
                 secuencia = secuencia,
                 iluminadoIndex = iluminadoIndex,
+                enabled = enabled,
                 onColorClick = onColorClick
             )
         }
     }
+
     /**
      * SimonButtonRow
      *
      * Fila de botones que representan colores específicos del juego.
-     * Cada botón puede estar iluminado según el índice proporcionado en `iluminadoIndex`.
+     * Cada botón puede iluminarse según el `iluminadoIndex` proporcionado.
      *
      * Parámetros:
      * - `colors`: Lista de colores a representar en la fila.
-     * - `secuencia`: Lista de colores generada por el juego, utilizada para determinar el botón iluminado.
-     * - `iluminadoIndex`: Índice del color actualmente iluminado en la secuencia.
+     * - `secuencia`: Lista de colores generados por el juego, usada para determinar el botón iluminado.
+     * - `iluminadoIndex`: Índice del color que está iluminado actualmente en la secuencia.
+     * - `enabled`: Propiedad para habilitar/deshabilitar los botones.
      * - `onColorClick`: Acción a ejecutar cuando se hace clic en un botón de color.
      */
     @Composable
@@ -237,6 +222,7 @@ class IU {
         colors: List<SimonColor>,
         secuencia: List<SimonColor>,
         iluminadoIndex: Int,
+        enabled: Boolean,
         onColorClick: (SimonColor) -> Unit
     ) {
         Row(
@@ -260,76 +246,48 @@ class IU {
                             SimonColor.Green -> R.drawable.bverde4
                         }
                     },
+                    enabled = enabled,
                     onClick = { onColorClick(color) }
                 )
-                Spacer(modifier = Modifier.width(16.dp))
             }
-        }
-    }
-    /**
-     * PuntuactionButton
-     *
-     * Botón que muestra la puntuación actual del jugador. La puntuación se basa en el número
-     * de rondas completadas correctamente.
-     *
-     * Parámetros:
-     * - `modifier`: Modificador de diseño para personalizar el botón (opcional).
-     * - `ronda`: Ronda o puntuación actual del juego.
-     * - `onClick`: Acción a ejecutar al hacer clic en el botón (opcional).
-     */
-    @Composable
-    fun PuntuactionButton(modifier: Modifier = Modifier, ronda: Int, onClick: () -> Unit) {
-        Button(
-            onClick = onClick,
-            modifier = modifier.size(500.dp, 100.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFECECDD)),
-        ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                Image(
-                    painter = painterResource(id = R.drawable.bpuntuacion),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(300.dp)
-                        .align(Alignment.Center)
-                )
-                Text(
-                    text = "Puntuación: $ronda", fontFamily = FontFamily.Cursive, fontSize = 25.sp,
-                    style = MaterialTheme.typography.bodyLarge.copy(Color.Black),
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(end = 45.dp)
-                )
-            }
-        }
-    }
-    /**
-     * ColorButton
-     *
-     * Botón individual que representa un color del juego (rosa, azul, amarillo, verde).
-     * Cambia su apariencia visual (imagen) según si está iluminado o no.
-     *
-     * Parámetros:
-     * - `imageResId`: ID del recurso de imagen que representa el botón.
-     * - `onClick`: Acción a ejecutar al hacer clic en el botón.
-     * - `modifier`: Modificador de diseño para personalizar el botón (opcional).
-     */
-    @Composable
-    fun ColorButton(
-        imageResId: Int,
-        onClick: () -> Unit,
-        modifier: Modifier = Modifier
-    ) {
-        Box(
-            modifier = modifier
-                .size(150.dp)
-                .clickable { onClick() }
-        ) {
-            Image(
-                painter = painterResource(id = imageResId),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize()
-            )
         }
     }
 
+    /**
+     * ColorButton
+     *
+     * Botón de color que representa un color específico del juego.
+     *
+     * Parámetros:
+     * - `imageResId`: Identificador del recurso de imagen que se mostrará en el botón.
+     * - `enabled`: Indica si el botón está habilitado.
+     * - `onClick`: Acción a ejecutar cuando se hace clic en el botón.
+     */
+    @Composable
+    fun ColorButton(imageResId: Int, enabled: Boolean, onClick: () -> Unit) {
+        Box(
+            modifier = Modifier
+                .size(100.dp)
+                .padding(8.dp)
+                .clickable(enabled = enabled, onClick = onClick)
+        ) {
+            Image(painter = painterResource(id = imageResId), contentDescription = null)
+        }
+    }
+
+    /**
+     * PuntuactionButton
+     *
+     * Botón que muestra la puntuación actual del jugador.
+     *
+     * Parámetros:
+     * - `ronda`: Puntuación del jugador.
+     * - `onClick`: Acción a ejecutar cuando se hace clic en el botón.
+     */
+    @Composable
+    fun PuntuactionButton(ronda: Int, onClick: () -> Unit) {
+        Button(onClick = onClick) {
+            Text(text = "Puntuación: $ronda", fontFamily = FontFamily.Default, fontSize = 16.sp)
+        }
+    }
 }
