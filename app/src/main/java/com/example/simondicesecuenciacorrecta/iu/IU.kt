@@ -126,7 +126,7 @@ class IU {
             ) {
                 Spacer(modifier = Modifier.height(50.dp))
 
-                SimonButtons(secuenciaActual, iluminadoIndex = iluminadoIndex, enabled = _activoBoton && !triggerAnimation
+                SimonButtons(secuenciaActual, iluminadoIndex = iluminadoIndex, enabled = _activoBoton
                 ) { color ->
                     modelView.SecuenciaJugador.secuencia.add(color)
                     if (modelView.ComprobarSecuencia()){
