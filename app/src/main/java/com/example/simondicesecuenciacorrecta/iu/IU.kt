@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.simondicesecuenciacorrecta.R
+import com.example.simondicesecuenciacorrecta.datos.SecuenciaJugador
 
 import com.example.simondicesecuenciacorrecta.datos.SimonColor
 import com.example.simondicesecuenciacorrecta.modelView.ModelView
@@ -129,11 +130,12 @@ class IU {
                 SimonButtons(secuenciaActual, iluminadoIndex = iluminadoIndex, enabled = _activoBoton
                 ) { color ->
                     modelView.SecuenciaJugador.secuencia.add(color)
-                    if (modelView.ComprobarSecuencia()){
-                        triggerAnimation=true
+                    if (modelView.SecuenciaJugador.secuencia.size == modelView.SecuenciaJuego.secuencia.size) {
+                        if (modelView.ComprobarSecuencia()) {
+                            triggerAnimation = true
+                        }
                     }
                 }
-
                 Spacer(modifier = Modifier.height(50.dp))
 
                 StartButton(enabled = _activostart) {
